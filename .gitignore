@@ -1,1 +1,3 @@
 .firebaserc
+.idea
+**/node_modules/*
