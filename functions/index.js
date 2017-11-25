@@ -36,7 +36,8 @@ exports.notifications =  functions.database.ref('/notifications/{customerId}')
                 const payload = {
                     notification: {
                         title: "Sent to " + customerId,
-                        body: notification
+                        body: notification,
+                        "sound" : "default"
                     }
                 };
 
