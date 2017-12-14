@@ -36,17 +36,23 @@ exports.notifications =  functions.database.ref('/notifications/{customerId}')
                 for (var key in registrationTokens) {
                     tokensToSendTo.push(registrationTokens[key])
                 }
-                const payload = {
+		console.log("Notification:" + JSON.stringify(notification))
+                console.log("Message:" + notification.message)
+		const payload = {
                     notification: {
                         title: "Contractor Notification",
-                        body: notification,
+                        body: notification.message,
                         "sound" : "default"
                     }
                 };
                 console.log("Tokens:", tokensToSendTo)
+		if(tokensToSendTo == null || tokensToSendTo.length == 0) {
+			console.log("No tokens to send to")
+			return null;
+		}
                 // Send a message to the device corresponding to the provided registration token.
                 return admin.messaging().sendToDevice(tokensToSendTo, payload).then(function(response) {
-                    if(respons.failureCount > 0) {
+                    if(response.failureCount > 0) {
                         console.log(response.results[0].error)
                     }
                     console.log("Successfully sent message:", response);
