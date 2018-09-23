@@ -6,7 +6,7 @@ admin.initializeApp();
 
 //Used to delete old image when new image is loaded for home
 exports.homeImageUpdated = functions.database.ref('/users/{customerId}/homeImageFileName')
-    .onUpdate((change, context) => {
+    .onWrite((change, context) => {
         const customerId = context.params.customerId
         if (!change.before.exists()) {
             console.log("No previous home image exists.");
@@ -30,7 +30,7 @@ exports.homeImageUpdated = functions.database.ref('/users/{customerId}/homeImage
 });
 
 exports.logoImageUpdated = functions.database.ref('/users/{contractorId}/logoFileName')
-    .onUpdate((change, context) => {
+    .onWrite((change, context) => {
         const contractorId = context.params.contractorId
         if (!change.before.exists()) {
             console.log("No previous home image exists.");
