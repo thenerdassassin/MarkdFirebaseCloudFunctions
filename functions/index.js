@@ -53,6 +53,102 @@ exports.logoImageUpdated = functions.database.ref('/users/{contractorId}/logoFil
             });
 });
 
+exports.plumbingServiceImageUpdated = functions.database.ref('/users/{customerId}/plumbingServices/{serviceId}/files/{fileId}')
+    .onWrite((change, context) => {
+        const customerId = context.params.customerId
+        if (!change.before.exists()) {
+            console.log("No previous service image exists.");
+            return null;
+        }
+        const oldFile = change.before.val().guid;
+        if(change.after.exists()) {
+            const newFile = change.after.val().guid;
+
+            if(oldFile == newFile) {
+                console.log("No change to file")
+                return null;
+            }
+        }
+
+        const {Storage} = require('@google-cloud/storage');
+        const storage = new Storage();
+        const bucketName = 'markd-schmidt-happens.appspot.com';
+        const filename = 'images/services/' + customerId + "/" + oldFile;
+
+        // Deletes the file from the bucket
+        return storage.bucket(bucketName).file(filename).delete()
+            .then(() => {
+              console.log(`gs://${bucketName}/${filename} deleted.`);
+            })
+            .catch(err => {
+              console.error('ERROR:', err);
+            });
+});
+
+exports.electricalServiceImageUpdated = functions.database.ref('/users/{customerId}/electricalServices/{serviceId}/files/{fileId}')
+    .onWrite((change, context) => {
+        const customerId = context.params.customerId
+        if (!change.before.exists()) {
+            console.log("No previous service image exists.");
+            return null;
+        }
+        const oldFile = change.before.val().guid;
+        if(change.after.exists()) {
+            const newFile = change.after.val().guid;
+
+            if(oldFile == newFile) {
+                console.log("No change to file")
+                return null;
+            }
+        }
+
+        const {Storage} = require('@google-cloud/storage');
+        const storage = new Storage();
+        const bucketName = 'markd-schmidt-happens.appspot.com';
+        const filename = 'images/services/' + customerId + "/" + oldFile;
+
+        // Deletes the file from the bucket
+        return storage.bucket(bucketName).file(filename).delete()
+            .then(() => {
+              console.log(`gs://${bucketName}/${filename} deleted.`);
+            })
+            .catch(err => {
+              console.error('ERROR:', err);
+            });
+});
+
+exports.hvacServiceImageUpdated = functions.database.ref('/users/{customerId}/hvacServices/{serviceId}/files/{fileId}')
+    .onWrite((change, context) => {
+        const customerId = context.params.customerId
+        if (!change.before.exists()) {
+            console.log("No previous service image exists.");
+            return null;
+        }
+        const oldFile = change.before.val().guid;
+        if(change.after.exists()) {
+            const newFile = change.after.val().guid;
+
+            if(oldFile == newFile) {
+                console.log("No change to file")
+                return null;
+            }
+        }
+
+        const {Storage} = require('@google-cloud/storage');
+        const storage = new Storage();
+        const bucketName = 'markd-schmidt-happens.appspot.com';
+        const filename = 'images/services/' + customerId + "/" + oldFile;
+
+        // Deletes the file from the bucket
+        return storage.bucket(bucketName).file(filename).delete()
+            .then(() => {
+              console.log(`gs://${bucketName}/${filename} deleted.`);
+            })
+            .catch(err => {
+              console.error('ERROR:', err);
+            });
+});
+
 //Used to send Push Notifications when new notification exists
 exports.notifications = functions.database.ref('/notifications/{customerId}')
     .onWrite((change, context) => {
