@@ -125,6 +125,10 @@ exports.hvacServiceImageUpdated = functions.database.ref('/users/{customerId}/hv
             return null;
         }
         const oldFile = change.before.val().guid;
+        if(!oldFile) {
+            console.log("No previous service image exists.");
+            return null;
+        }
         if(change.after.exists()) {
             const newFile = change.after.val().guid;
 
@@ -152,9 +156,9 @@ exports.hvacServiceImageUpdated = functions.database.ref('/users/{customerId}/hv
 //Used to send Push Notifications when new notification exists
 exports.notifications = functions.database.ref('/notifications/{customerId}')
     .onWrite((change, context) => {
+        console.log("Received write event on notifications")
         const customerId = context.params.customerId
         const previous = change.before
-        const value = change.after.val()
         var previousNotification = null;
 
         if (!change.after.exists()) {
@@ -166,8 +170,10 @@ exports.notifications = functions.database.ref('/notifications/{customerId}')
             previousNotification = previous.val()[0]
         }
 
+        const value = change.after.val()
         const notification = value[0]
         if(previousNotification == notification) {
+            console.log("Already sent this notification")
             return null;
         }
         console.log('customer:', customerId, ', message:', notification);
@@ -189,7 +195,8 @@ exports.notifications = functions.database.ref('/notifications/{customerId}')
                         notification: {
                             title: "Contractor Notification",
                             body: notification.message,
-                            "sound" : "default"
+                            "sound" : "default",
+                            badge: "1"
                         }
                     };
             console.log("Tokens:", tokensToSendTo)
