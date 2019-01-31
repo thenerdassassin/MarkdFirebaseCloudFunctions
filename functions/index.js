@@ -10,7 +10,7 @@ exports.homeImageUpdated = functions.database.ref('/users/{customerId}/homeImage
         const customerId = context.params.customerId
         if (!change.before.exists()) {
             console.log("No previous home image exists.");
-            return null;
+            return Promise.resolve("No previous home image.")
         }
         const oldFile = change.before.val();
 
@@ -33,8 +33,8 @@ exports.logoImageUpdated = functions.database.ref('/users/{contractorId}/logoFil
     .onWrite((change, context) => {
         const contractorId = context.params.contractorId
         if (!change.before.exists()) {
-            console.log("No previous home image exists.");
-            return null;
+            console.log("No previous logo image exists.");
+            return Promise.resolve("No previous logo")
         }
         const oldFile = change.before.val();
 
@@ -58,7 +58,7 @@ exports.plumbingServiceImageUpdated = functions.database.ref('/users/{customerId
         const customerId = context.params.customerId
         if (!change.before.exists()) {
             console.log("No previous service image exists.");
-            return null;
+            return Promise.resolve("No previous service")
         }
         const oldFile = change.before.val().guid;
         if(change.after.exists()) {
@@ -66,7 +66,7 @@ exports.plumbingServiceImageUpdated = functions.database.ref('/users/{customerId
 
             if(oldFile == newFile) {
                 console.log("No change to file")
-                return null;
+                return Promise.resolve("No change")
             }
         }
 
@@ -90,7 +90,7 @@ exports.electricalServiceImageUpdated = functions.database.ref('/users/{customer
         const customerId = context.params.customerId
         if (!change.before.exists()) {
             console.log("No previous service image exists.");
-            return null;
+            return Promise.resolve("No previous service image")
         }
         const oldFile = change.before.val().guid;
         if(change.after.exists()) {
@@ -98,7 +98,7 @@ exports.electricalServiceImageUpdated = functions.database.ref('/users/{customer
 
             if(oldFile == newFile) {
                 console.log("No change to file")
-                return null;
+                return Promise.resolve("No change.")
             }
         }
 
@@ -122,19 +122,19 @@ exports.hvacServiceImageUpdated = functions.database.ref('/users/{customerId}/hv
         const customerId = context.params.customerId
         if (!change.before.exists()) {
             console.log("No previous service image exists.");
-            return null;
+            return Promise.resolve("No previous service image")
         }
         const oldFile = change.before.val().guid;
         if(!oldFile) {
             console.log("No previous service image exists.");
-            return null;
+            return Promise.resolve("No previous service image")
         }
         if(change.after.exists()) {
             const newFile = change.after.val().guid;
 
             if(oldFile == newFile) {
                 console.log("No change to file")
-                return null;
+                return Promise.resolve("No change.")
             }
         }
 
@@ -159,22 +159,27 @@ exports.notifications = functions.database.ref('/notifications/{customerId}')
         console.log("Received write event on notifications")
         const customerId = context.params.customerId
         const previous = change.before
-        var previousNotification = null;
+        var previousNotificationList = null;
 
         if (!change.after.exists()) {
             console.log("For ", customerId, " data deleted.")
-            return null;
+            return Promise.resolve("Data deleted.")
         }
 
         if (previous.exists()) {
-            previousNotification = previous.val()[0]
+            previousNotificationList = previous.val()
         }
 
         const value = change.after.val()
-        const notification = value[0]
-        if(previousNotification == notification) {
+        const currentNotificationList = value
+        const notification = currentNotificationList[0]
+        if(!currentNotificationList ||
+            currentNotificationList.length < 1 ||
+            (previousNotificationList &&
+                previousNotificationList.some(element => element.message === notification.message)
+        )) {
             console.log("Already sent this notification")
-            return null;
+            return Promise.resolve("Already sent.")
         }
         console.log('customer:', customerId, ', message:', notification);
 
@@ -202,7 +207,7 @@ exports.notifications = functions.database.ref('/notifications/{customerId}')
             console.log("Tokens:", tokensToSendTo)
     		if(tokensToSendTo == null || tokensToSendTo.length == 0) {
     			console.log("No tokens to send.")
-    			return null;
+    			return Promise.resolve("No tokens.")
     		}
             // Send a message to the device corresponding to the provided registration token.
             return admin.messaging().sendToDevice(tokensToSendTo, payload).then(function(response) {
