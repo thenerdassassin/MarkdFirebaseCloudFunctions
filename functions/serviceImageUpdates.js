@@ -30,7 +30,7 @@ exports.plumbingServiceImageUpdated = functions.database.ref('/users/{customerId
             });
 });
 
-exports.electricalServiceImageUpdated = functions.database.ref('/users/{customerId}/electricalServices/{serviceId}/files/{fileId}')
+exports.electricalServiceImageUpdated = functions.database.ref('/users/{customerId}/electricalServices/{serviceId}/files')
     .onWrite((change, context) => {
         const customerId = context.params.customerId
         if (!change.before.exists()) {
@@ -55,7 +55,7 @@ exports.electricalServiceImageUpdated = functions.database.ref('/users/{customer
             });
 });
 
-exports.hvacServiceImageUpdated = functions.database.ref('/users/{customerId}/hvacServices/{serviceId}/files/{fileId}')
+exports.hvacServiceImageUpdated = functions.database.ref('/users/{customerId}/hvacServices/{serviceId}/files')
     .onWrite((change, context) => {
         const customerId = context.params.customerId
         if (!change.before.exists()) {
