@@ -1,4 +1,5 @@
 .firebaserc
 .idea
-**/node_modules/*
+functions/node_modules/*
 firebase-debug.log
+node_modules/*
