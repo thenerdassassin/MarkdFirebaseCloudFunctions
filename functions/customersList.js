@@ -25,8 +25,9 @@ exports.electricianReferenceChange = functions.database.ref('/users/{customerId}
             console.log("No change to electricianReference")
             return Promise.resolve("No change to electricianReference")
         }
-        const contractorReferences = mapToDatabaseReferences(contractors);
         console.log("Updating electrician customer lists of " + contractors, " to remove/add " + customerId);
+        const contractorReferences = mapToDatabaseReferences(contractors);
+        console.log("Got references: ", contractorReferences)
         return updateCustomerLists(contractorReferences, customerId);
 });
 
@@ -59,8 +60,13 @@ exports.painterReferenceChange = functions.database.ref('/users/{customerId}/pai
 });
 
 function updateCustomerLists(contractorReferences, customerId) {
-    return Promise.all(contractorReferences.map(reference => reference.once('value'))
+    return Promise.all(
+      contractorReferences.map(reference => {
+        console.log("Mapping reference: " + reference)
+        return reference == undefined ? undefined : reference.once('value')
+      })
     ).then(snapshots => {
+        console.log("Processing snapshots: ", snapshots)
         return processSnapshots(contractorReferences, snapshots, customerId);
     }).then(_ => {
         console.log("Updated customerLists")
@@ -78,32 +84,46 @@ function processSnapshots(contractorReferences, snapshots, customerId) {
 
 function mapToDatabaseReferences(contractors) {
     return contractors
-        .filter((contractor) => contractor)
-        .map((contractor) =>
-            database.ref(getReferenceStringOfCustomerList(contractor)
-        ));
+        .map((contractor) => {
+          let referenceString = getReferenceStringOfCustomerList(contractor)
+          return referenceString == undefined ? undefined : database.ref(referenceString)
+        });
 }
 
 function deleteFromCustomerList(databaseRef, snapshot, customerId) {
-    const oldCustomerList = snapshot.val();
-    if(oldCustomerList) {
+    console.log("Deleting ", customerId, "from ", databaseRef)
+    if(snapshot && snapshot.exists()) {
+      let oldCustomerList = snapshot.val();
+      if(oldCustomerList) {
+          console.log("Previous customerList: ", oldCustomerList)
         return databaseRef.set(oldCustomerList.filter(id => id !== customerId));
-    } else {
-        return Promise.resolve("No customers in list");
+      }
     }
+    return Promise.resolve("No customers in list");
 }
 
 function insertInCustomerList(databaseRef, snapshot, customerId) {
-    const oldCustomerList = snapshot.val();
-    if(oldCustomerList) {
-        return databaseRef.set([...oldCustomerList, customerId]);
-    } else {
-        return databaseRef.set([customerId])
+    console.log("Inserting ", customerId, "to ", databaseRef)
+    if(!snapshot) {
+      return Promise.resolve("No contractor to insert customer into.")
     }
+    if(snapshot.exists()) {
+        const oldCustomerList = snapshot.val();
+        if(oldCustomerList) {
+            console.log("Previous customerList: ", oldCustomerList)
+            return databaseRef.set([...oldCustomerList, customerId])
+        }
+    }
+    return databaseRef.set({"0":customerId})
 }
 
 function getReferenceStringOfCustomerList(id) {
-    return '/users/' + id + '/customers';
+    if(id) {
+      const referenceString = '/users/' + id + '/customers'
+      console.log(referenceString)
+      return referenceString
+    }
+    return undefined
 }
 
 function getValue(changeItem) {
