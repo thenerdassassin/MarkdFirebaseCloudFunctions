@@ -26,6 +26,7 @@ const logoOrHomeImagesUpdates = require('./logoOrHomeImagesUpdates.js');
 const serviceImageUpdates = require('./serviceImageUpdates.js');
 const notifications = require('./notifications.js');
 const customersList = require('./customersList.js');
+const contractorZipCodeUpdated = require('./contractorZipCodeUpdated.js');
 
 exports.homeImageUpdated = logoOrHomeImagesUpdates.homeImageUpdated;
 exports.logoImageUpdated = logoOrHomeImagesUpdates.logoImageUpdated;
@@ -37,3 +38,4 @@ exports.plumberReferenceChange = customersList.plumberReferenceChange;
 exports.electricianReferenceChange = customersList.electricianReferenceChange;
 exports.hvactechnicianReferenceChange = customersList.hvactechnicianReferenceChange;
 exports.painterReferenceChange = customersList.painterReferenceChange;
+exports.contractorZipCodeUpdated = contractorZipCodeUpdated.contractorZipCodeUpdated;
