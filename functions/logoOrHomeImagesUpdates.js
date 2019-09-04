@@ -3,7 +3,7 @@ const functions = require('firebase-functions');
 const {Storage} = require('@google-cloud/storage');
 
 const storage = new Storage();
-const bucketName = 'markd-schmidt-happens.appspot.com';
+const bucketName = 'markd-home.appspot.com';
 
 //Used to delete old image when new image is loaded for home
 exports.homeImageUpdated = functions.database.ref('/users/{customerId}/homeImageFileName')

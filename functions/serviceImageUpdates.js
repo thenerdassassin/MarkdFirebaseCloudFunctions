@@ -3,7 +3,7 @@ const functions = require('firebase-functions');
 const {Storage} = require('@google-cloud/storage');
 
 const storage = new Storage();
-const bucketName = 'markd-schmidt-happens.appspot.com';
+const bucketName = 'markd-home.appspot.com';
 
 exports.plumbingServiceImageUpdated = functions.database.ref('/users/{customerId}/plumbingServices/{serviceId}/files')
     .onWrite((change, context) => {

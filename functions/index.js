@@ -6,17 +6,16 @@ const firebase = require("firebase");
 const {Storage} = require('@google-cloud/storage');
 
 const storage = new Storage();
-const bucketName = 'markd-schmidt-happens.appspot.com';
 admin.initializeApp();
 
 // Initialize Firebase
 var config = {
-    apiKey: "AIzaSyD7SNQsDzEvgaF3JsRg8R8IdFp2m3T7094",
-    authDomain: "markd-schmidt-happens.firebaseapp.com",
-    databaseURL: "https://markd-schmidt-happens.firebaseio.com",
-    projectId: "markd-schmidt-happens",
-    storageBucket: "markd-schmidt-happens.appspot.com",
-    messagingSenderId: "302940232325"
+    apiKey: "AIzaSyDsTyX8ior-fA9960MD6GyQfsX5_8DkSq0",
+    authDomain: "markd-home.firebaseapp.com",
+    databaseURL: "https://markd-home.firebaseio.com",
+    projectId: "markd-home",
+    storageBucket: "markd-home.appspot.com",
+    messagingSenderId: "659561774379"
   };
 
 firebase.initializeApp(config);
